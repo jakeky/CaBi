@@ -29,12 +29,15 @@ from dateutil.relativedelta import relativedelta
 
 # Settings
 
+# Check the page here for the latest file dates:
+# https://s3.amazonaws.com/capitalbikeshare-data/index.html
+
 # Flag for whether to download 2010 to 2017 annual files
 dl_year_files = False
 # Start month of data to download
-start_month = '202307'
+start_month = '202308'
 # End month of data to download
-end_month = '202307'
+end_month = '202309'
 
 main_dir = r'C:\Users\jacob\Downloads\capital_bikeshare_data'
 base_url = 'https://s3.amazonaws.com/capitalbikeshare-data/'
@@ -60,29 +63,25 @@ file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
 # Define a function to generate a list of month names
-def get_dates(start, end): 
-    # Initialize an empty list 
-    dates = [] 
-    # Define the month increment 
-    month = relativedelta(months=+1) 
-    # Define the date format
-    fmt ='%Y%m' 
-    # Convert the input strings to date objects 
-    start_date = dt.datetime.strptime(start, fmt).date() 
-    end_date = dt.datetime.strptime(end, fmt).date() 
-    # Loop through the dates from start to end 
-    d = start_date 
-    while d <= end_date: 
-        # Append the date to the list in string format
-        dates.append(d.strftime(fmt)) 
-        # Increment the date by one month 
-        d += month
-        # Return the list of dates 
-        return dates
+def get_months(start, end):
+  # create a list to store the months
+  months = []
+  # convert the start and end strings to datetime objects
+  start_date = dt.datetime.strptime(start, "%Y%m")
+  end_date = dt.datetime.strptime(end, "%Y%m")
+  # loop from the start date to the end date
+  while start_date <= end_date:
+    # append the formatted month to the list
+    months.append(start_date.strftime("%Y%m"))
+    # increment the start date by one month
+    start_date = start_date + dt.timedelta(days=31)
+    start_date = start_date.replace(day=1)
+  # return the list of months
+  return months
 
 # Define the list of prefixes for the files
 year_prefixes = [str(year) for year in range(2010, 2018)] 
-month_prefixes = get_dates(start_month, end_month)
+month_prefixes = get_months(start_month, end_month)
 
 prefixes = year_prefixes if dl_year_files else [] 
 prefixes += month_prefixes
