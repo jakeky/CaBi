@@ -85,18 +85,60 @@ def modify_column_name(col):
 # Apply the function to all column names using the map method
 cabi_df.columns = cabi_df.columns.map(modify_column_name)
 
+cabi_df.to_csv(f'{main_dir}\cabi_trips.csv', index=False, single_file=True)
+
 # Create a context to register tables
 c = Context()
 
 # Register the dataframe as a table in the context
 c.create_table('cabi_trips', cabi_df)
 
-# Example SQL query
-result = c.sql("SELECT * FROM cabi_trips WHERE start_station_id IN ('31208', '31904', '31948', '32232', '32600', '32601', '32602', '32603', '32604', '32605', '32606', '32607', '32608', '32609') AND CAST(started_at AS DATE) > '2019-05-01'")
+# Query Falls Church stations only based on start and ending stations
+
+# 31904: East Falls Church Metro / Sycamore St & 19th St N (Fairfax)
+# 31948: W&OD Trail & Langston Blvd
+# 32232: West Falls Church Metro (Fairfax)
+# 32600: Founders Row/W Broad St & West St
+# 32601: Eden Center
+# 32602: N Oak St & W Broad St
+# 32603: Pennsylvania Ave & Park Ave
+# 32604: E Fairfax St & S Washington St
+# 32605: W Broad St & Little Falls St
+# 32606: N Roosevelt St & Roosevelt Blvd
+# 32607: S Maple Ave & S Washington St
+# 32608: Falls Church City Hall / Park Ave & Little Falls St
+# 32609: W Columbia St & N Washington St
+
+# Create a list of start station IDs
+start_station_ids = ['31904', '31948', '32232', '32600', '32601', '32602', '32603', '32604', '32605', '32606', '32607', '32608', '32609']
+
+# Convert the list to a string of comma-separated values
+start_station_ids_str = "','".join(start_station_ids)
+start_station_ids_str = "'" + start_station_ids_str + "'"
+
+# Use the string as a parameter in the sql query
+start_query = c.sql(f"SELECT * FROM cabi_trips WHERE start_station_id IN ({start_station_ids_str}) AND CAST(started_at AS DATE) > '2019-05-01'")
+
+# use the same list of end station IDs as before
+end_station_ids = start_station_ids
+
+# convert the list to a string of comma-separated values
+end_station_ids_str = "','".join(end_station_ids)
+end_station_ids_str = "'" + end_station_ids_str + "'"
+
+# use the string as a parameter in the sql query
+end_query = c.sql(f"SELECT * FROM cabi_trips WHERE end_station_id IN ({end_station_ids_str}) AND CAST(ended_at AS DATE) > '2019-05-01'")
 
 # Use the ProgressBar() as a context manager around the compute() call
 with ProgressBar():
-    cut = result.compute()
+    start_cut = start_query.compute()
+    
+# Save the dask dataframe to separate csv files using the to_csv() function
+start_cut.to_csv(f'{main_dir}\start_data.csv', index=False)
 
-# Save the dask dataframe to a csv file using the to_csv() function
-cut.to_csv('data.csv', index=False)
+# Use the ProgressBar() as a context manager around the compute() call
+with ProgressBar():
+    end_cut = end_query.compute()
+    
+# Save the dask dataframes to separate csv files using the to_csv() function
+end_cut.to_csv(f'{main_dir}\end_data.csv', index=False)
