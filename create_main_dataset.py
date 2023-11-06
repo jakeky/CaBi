@@ -109,6 +109,25 @@ c.create_table('cabi_trips', cabi_df)
 # 32608: Falls Church City Hall / Park Ave & Little Falls St
 # 32609: W Columbia St & N Washington St
 
+# Stations that have changed locations in Falls Church
+
+# Only two start locations for the first entry
+# 31948
+# W&OD Trail bridge & N Washington St
+# W&OD Trail & Langston Blvd
+
+# 32600
+# May 2019 to Nov. 2022
+# George Mason High School / Haycock Rd & Leesburg Pike
+# Meridian High School / Haycock Rd & Leesburg Pike
+# Dec. 2022 to present
+# Founders Row/W Broad St & West St
+
+# 32601
+# State Theatre / Park Pl & N Washington St
+# June 2022 to present
+# Eden Center
+
 # Create a list of start station IDs
 start_station_ids = ['31904', '31948', '32232', '32600', '32601', '32602', '32603', '32604', '32605', '32606', '32607', '32608', '32609']
 
