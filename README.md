@@ -3,5 +3,5 @@ This is a GitHub repo with scripts to analyze Capital Bikeshare data. The data h
 
 <p align="center">
   <img src="bike_dc_pic.jpg" width="350" title="hover text">
-  <img src="bike_dc_pic.jpge" width="350" alt="accessibility text">
+  <img src="bike_dc_pic.jpge" width="350">
 </p>
