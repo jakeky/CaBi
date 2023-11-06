@@ -32,13 +32,13 @@ data_path = r'C:\Users\jacob\Downloads\capital_bikeshare_data'
 # June 2022 to present
 # Eden Center
 
-# Choose start or end
-mode = 'end'
+# Choose to go by start or end station
+mode = 'start'
 
 upd_date =  date.today().strftime("%Y-%m-%d")
-end_chart_date = '2023-12-31'
+end_chart_date = '2023-10-31'
 
-df_long = pd.read_csv(f'{data_path}\{mode}_data.csv')
+df_long = pd.read_csv(f'{data_path}\{mode}_data.csv', low_memory=False)
 
 station_names_by_id = {31948:'W&OD Trail & Langston Blvd',
                32600:'Founders Row/W Broad St & West St',
@@ -47,7 +47,7 @@ station_names_by_id = {31948:'W&OD Trail & Langston Blvd',
 
 # Only keep values for current station location
 for key, value in station_names_by_id.items():
-    df_long = df_long.query(f"start_station_id != @key or {mode}_station_name == @value")
+    df_long = df_long.query(f"{mode}_station_id != @key or {mode}_station_name == @value")
 
 df_long = df_long.drop_duplicates()
 
@@ -64,6 +64,26 @@ df_sum = df_sum.reset_index()
 
 df_wide = df_sum.pivot(index='month_date', columns=f'{mode}_station_id', values='trips')
 
+d = {31904: 'efc_metro', # East Falls Church Metro / Sycamore St & 19th St N (Fairfax)
+     31948: 'wod_trail', # W&OD Trail & Langston Blvd
+     32232: 'wfc_metro', # West Falls Church Metro (Fairfax)
+     32600: 'founders_row', # Founders Row/W Broad St & West St
+     32601: 'eden_center', # Eden Center
+     32602: 'n_oak_w_broad', # N Oak St & W Broad St
+     32603: 'penn_park', # Pennsylvania Ave & Park Ave
+     32604: 'e_fairfax_s_wash', # E Fairfax St & S Washington St
+     32605: 'w_broad_little', # W Broad St & Little Falls St
+     32606: 'n_roosevelt', # N Roosevelt St & Roosevelt Blvd
+     32607: 's_maple_s_wash', # S Maple Ave & S Washington St
+     32608: 'city_hall', # Falls Church City Hall / Park Ave & Little Falls St
+     32609: 'w_columbia_n_wash' # W Columbia St & N Washington St
+     }
+
+df_export = df_wide.copy(deep=True)
+df_export = df_export.rename(columns=d)
+
+df_export.to_csv(rf'{chart_path}\fcc_bikeshare_monthly_totals_by_{mode}_station.csv')
+
 # Loop over all the columns in the dataframe
 for col in df_wide.columns:
     # Save each column as a separate series
@@ -79,7 +99,7 @@ first_exhibit.add_exhibit_title("Capital Bikeshare in Falls Church\n(2019 to pre
 
 mon = datetime.today().strftime("%b.").replace("May.", "May").replace("Jun.", "June").replace("Jul.", "July").replace("Sep.", "Sept.")
 
-first_exhibit.add_exhibit_captions('Jacob Williams\njacob@wescinc.com', datetime.today().strftime(f'{mon} %d, %Y'))
+first_exhibit.add_exhibit_captions('Jacob Williams\njacob@wescinc.com', datetime.today().strftime(f'{mon} %#d, %Y'))
 ###############################################################################
 # Panel 1
 ###############################################################################
@@ -118,7 +138,7 @@ first_exhibit.format_panel_numaxis("panel2", num_range = [0, 200], tick_pos = ra
 first_exhibit.format_panel_ts_xaxis("panel2", mark_years=True, major_pos = cb.gen_ts_tick_label_range("2019-03-01", f'2023-09-01', "A"),
                                     label_dates = cb.gen_ts_tick_label_range("2019-01-01", end_chart_date, "A", skip=1), label_fmt='%Y')
 
-first_exhibit.add_panel_footnotes("panel2", [f'Note: Data from May 2019 to {last_date_fmt}.\nSource: Capital Bikeshare.'], y_pos = -.08)
+first_exhibit.add_panel_footnotes("panel2", [f'Note: Data from May 2019 to {last_date_fmt}. W&OD Trail station starts in Oct. 2021. Founders Row station starts in Dec. 2022.\nSource: Capital Bikeshare.'], y_pos = -.08)
 
 first_exhibit.add_panel_keylines("panel2", "2019-05-20", 170, ['W&OD Trail & Langston Blvd (Arlington County)',
                                                                'West Falls Church (Fairfax County)',
@@ -152,7 +172,7 @@ first_exhibit.format_panel_numaxis("panel3", num_range = [0, 200], tick_pos = ra
 first_exhibit.format_panel_ts_xaxis("panel3", mark_years=True, major_pos = cb.gen_ts_tick_label_range("2019-03-01", f'2023-09-01', "A"),
                                     label_dates = cb.gen_ts_tick_label_range("2019-01-01", end_chart_date, "A", skip=1), label_fmt='%Y')
 
-first_exhibit.add_panel_footnotes("panel3", [f'Note: Data from May 2019 to {last_date_fmt}.\nSource: Capital Bikeshare.'], y_pos = -.08)
+first_exhibit.add_panel_footnotes("panel3", [f'Note: Data from May 2019 to {last_date_fmt}. Eden Center station starts in June 2022.\nSource: Capital Bikeshare.'], y_pos = -.08)
 
 first_exhibit.add_panel_keylines("panel3", "2019-05-20", 190, ['Eden Center',
                                                                'N Oak St & W Broad St',
