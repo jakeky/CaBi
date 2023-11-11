@@ -1,5 +1,3 @@
-Here is an example of a CONTRIBUTING.md file that I wrote for a GitHub project named CaBi:
-
 # Contributing to CaBi
 
 Thank you for your interest in contributing to CaBi! This is a GitHub repository with scripts to analyze Capital Bikeshare data. The data has information on bike trips in the D.C. area. The scripts use Python and Dask to read, clean, transform, and query the data with SQL. The repository shows how to use Dask and Dask SQL for large datasets. The repository also has some query and visualization examples.
