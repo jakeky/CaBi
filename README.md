@@ -9,7 +9,7 @@ This is a GitHub repo with scripts to analyze Capital Bikeshare data. The data h
 
 - `README.md`: Provides an overview and instructions for using the files in the repository.
 
-- `bike_dc_pic.jpg`: An image of a Capital Bikeshare bike against the DC landscape.
+- `bike_dc_pic.jpg`: An image of a bike against the DC landscape.
 
 - `create_chart_packet.py`: A Python script for generating a set of charts from the data.
 
