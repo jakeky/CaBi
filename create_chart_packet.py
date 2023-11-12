@@ -84,6 +84,16 @@ df_export = df_export.rename(columns=d)
 
 df_export.to_csv(rf'{chart_path}\fcc_bikeshare_monthly_totals_by_{mode}_station.csv')
 
+# True city stations
+columns_to_sum = [32600, 32601, 32602, 32603, 32604, 32605, 32606, 32607, 32608, 32609]
+
+df_wide = df_wide.fillna(0)
+
+# Summing the specified columns
+df_wide['city_stations'] = df_wide[columns_to_sum].sum(axis=1)
+
+df_wide['city_stations_fc'] = df_wide['city_stations'] + df_wide[31948] + df_wide[31904] + df_wide[32232]
+
 # Loop over all the columns in the dataframe
 for col in df_wide.columns:
     # Save each column as a separate series
@@ -191,3 +201,42 @@ first_exhibit.add_panel_keylines("panel3", "2019-05-20", 190, ['Eden Center',
                                                  ])
 ###############################################################################
 first_exhibit.save_exhibit(fr'{chart_path}\{upd_date}_{mode}_falls_church_cabi_ridership.pdf')
+###############################################################################
+# Exhibit 1
+###############################################################################
+second_exhibit = cb.Exhibit([3,3], normal_font = r'C:\Users\jacob\OneDrive\Program Languages\Python\texgyreheros\texgyreheros-regular.otf', bold_font = r'C:\Users\jacob\OneDrive\Program Languages\Python\texgyreheros\texgyreheros-bold.otf', 
+                     italic_font = r'C:\Users\jacob\OneDrive\Program Languages\Python\texgyreheros\texgyreheros-italic.otf', bold_italic_font = r'C:\Users\jacob\OneDrive\Program Languages\Python\texgyreheros\texgyreheros-bolditalic.otf', h_space = .4) #h_space argument adds vertical space between charts to make room for footnotes
+second_exhibit.add_exhibit_title("Capital Bikeshare in Falls Church\n(2019 to present)")
+
+mon = datetime.today().strftime("%b.").replace("May.", "May").replace("Jun.", "June").replace("Jul.", "July").replace("Sep.", "Sept.")
+
+second_exhibit.add_exhibit_captions('Jacob Williams\njacob@wescinc.com', datetime.today().strftime(f'{mon} %#d, %Y'))
+###############################################################################
+# Panel 1
+###############################################################################
+second_exhibit.add_panel_ts("panel1", ["2019-03-01", end_chart_date], 0, 0, v_end = 3)
+second_exhibit.add_panel_title("panel1", 'Monthly Total Ridership: Falls Church vs. Greater Falls Church Area')
+#second_exhibit.add_panel_captions("panel1", 'Monthly', 'Rides')
+
+second_exhibit.plot_panel_ts_line("panel1", series_city_stations, line_color = '#69369E')
+second_exhibit.plot_panel_ts_line("panel1", series_city_stations_fc, line_color = '#589BB2')
+
+second_exhibit.format_panel_numaxis("panel1", num_range = [0, 1600], tick_pos = range(0, 1600, 200))
+second_exhibit.format_panel_ts_xaxis("panel1", mark_years=True, major_pos = cb.gen_ts_tick_label_range("2019-03-01", f'2023-09-01', "A"),
+                                    label_dates = cb.gen_ts_tick_label_range("2019-01-01", end_chart_date, "A", skip=1), label_fmt='%Y')
+
+last_date = last_date = series_31904.index.max()
+last_date_fmt_month = cb.format_month_irregular(last_date)
+last_date_fmt = last_date_fmt_month + last_date.strftime(' %Y')
+
+second_exhibit.add_panel_footnotes("panel1", [f'Note: *East Falls Church Metro, West Falls Church Metro, and W&OD Trail & Langston Blvd stations.\nData from May 2019 to {last_date_fmt}.\nSource: Capital Bikeshare.'], y_pos = -.08)
+
+second_exhibit.add_panel_keylines("panel1", "2019-05-20", 1500, ['Falls Church stations',
+                                                               'Incl. nearby stations*',
+                                                               ]
+
+                                 , color_list = ['#69369E', 
+                                                 '#589BB2',
+                                                 ])
+
+second_exhibit.save_exhibit(fr'{chart_path}\{upd_date}_{mode}_falls_church_overall_cabi_ridership.pdf')
