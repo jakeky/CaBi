@@ -23,6 +23,8 @@ This is a GitHub repo with scripts to analyze Capital Bikeshare data. The data h
 
 - `get_stations_by_location.py`: This script may be used to generate a dataset of bike-sharing stations categorized by location.
 
+- `analyze_hourly_station_data.py`: A Python script designed to analyze hourly station status data, calculating and visualizing the percentage of available bikes at each station through informative charts.
+
 - `fcc_bikeshare_monthly_totals_by_end_station.csv`: A CSV file containing monthly total data categorized by the end station of bike trips.
 
 - `fcc_bikeshare_monthly_totals_by_start_station.csv`: A CSV file containing monthly total data categorized by the start station of bike trips.
